@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../common/utils.js"></script>
+    </head>
+    <body>
+        <pre>
+            <script>
+
+                log('----Literal----');
+
+                let person = {
+                    firstName: 'Jim',
+                    lastName: 'Cooper',
+                    age : 29,
+                    isAdult : function(){ return this.age > 18; }
+                };
+
+                log('firstName', person.firstName);
+                log('age', person.age);
+                log('isAdult', person.isAdult());
+
+                log(Object.keys(person));
+
+                function registerUser(firstName, lastName){
+                    let person = {
+                        firstName,
+                        lastName
+                    };
+
+                    log(person);
+                }
+
+                registerUser('Kris', 'Cooper');
+
+                let person2 = {};
+
+                Object.assign(person2, person);
+
+                log(person2);
+
+                log(person === person2);
+
+                let healthStats = {
+                    height: 68,
+                    weight: 150
+                };
+
+                let mergedPerson = Object.assign({}, person, healthStats);
+
+                log(person);
+
+                log(mergedPerson);
+
+                let sofia = {
+                    firstName: 'Sofia',
+                    lastName: 'Cooper',
+                    age: 17,
+                    isAdult: function() { return this.age > 18; }
+                };
+                
+                log(sofia.isAdult());
+
+                log('----Constructor Function----');
+
+                function Person(firstName, lastName, age){
+                    this.firstName = firstName;
+                    this.lastName = lastName;
+                    this.age = age;
+                    this.isAdult = function() { return this.age > 21; }
+                }
+
+                let jim = new Person('Jim', 'Cooper', 29);
+                let jen = new Person('Jen', 'Cooper', 17);
+
+                log(jim);
+                log(sofia);
+
+            </script>
+        </pre>
+    </body>
+</html>

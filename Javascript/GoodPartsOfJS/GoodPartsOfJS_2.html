@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="../common/utils.js"></script>
+    </head>
+    <body>
+        <pre>
+            <script>
+                function identity(x){
+                    return x;
+                }
+
+                log('identity', identity(5));
+
+                function add(x, y){
+                    return x + y;
+                }
+
+                function mul(x, y){
+                    return x * y;
+                }
+
+                log('add', add(3, 5));
+                log('mul', mul(3, 5));
+
+                function identityf(x){
+                    return function(){
+                        return x;
+                    }
+                }
+
+                var idf = identityf(3)
+                log('idf', idf());
+
+                function addf(x){
+                    return function(y){
+                        return add(x, y);
+                    }
+                }
+
+                log('addf', addf(3)(4));
+
+                function applyf(func){
+                    return function(x){
+                        return function(y){
+                            return func(x,y);
+                        }
+                    }
+                }
+
+                var addf = applyf(add);
+                log('addf', addf(3)(4));
+                log('applyf', applyf(mul)(5)(6));
+
+                function curry(func, x){
+                    return function(y){
+                        return func(x,y);
+                    }
+                }
+
+                var add3 = curry(add, 3);
+                log('add3', add3(4));
+                log('curry', curry(mul,5)(6));
+
+                var inc1 = curry(add, 1);
+                    inc1 = addf(1);
+                    inc1 = applyf(add)(1);
+
+                log('inc1', inc1(5));
+                log('inc2', inc1(inc1(5)));
+
+                function methodize(func){                    
+                    return function(y){
+                        return func(this,y);
+                    }
+                }
+
+                Number.prototype.add = methodize(add);
+                log('methodize', (3).add(4));
+
+                function demethodize(func){
+                    return function(x, y){
+                        return func.call(x,y);
+                    }
+                }
+                log('demethodize', demethodize(Number.prototype.add)(5, 6));
+
+                function twice(binary){
+                    return function(x){
+                        return binary(x, x);
+                    }
+                }
+
+                var double = twice(add);
+                log('double', double(11));
+
+                var square = twice(mul);
+                log('square', square(11));
+
+                function composeu(unary1, unary2){
+                    return function(x){
+                        return unary2(unary1(x));
+                    }
+                }
+
+                log('composeu', composeu(double, square)(3));
+
+                function composeb(binary1, binary2){
+                    return function(x, y, z){
+                        return binary2(binary1(x,y), z);
+                    }
+                }
+
+                log('composeb', composeb(add, mul)(2, 3, 5));
+
+                function once(func){
+                    var counter = 0;
+                    return function(x, y){
+                        if (counter < 1){
+                            counter +=1;
+                            return func(x, y);
+                        }
+                        //throw 'throw!';
+                    }
+                }
+
+                var add_once = once(add);
+                log('add_once1', add_once(3, 4));
+                log('add_once2', add_once(3, 4));
+
+                function counterf(x){
+                    return{
+                        inc: function(){
+                            x += 1
+                            return x;
+                        },
+                        dec: function(){
+                            x -= 1
+                            return x;
+                        }
+                    }
+                }
+
+                var counter = counterf(10);
+                log('inc', counter.inc());
+                log('dec', counter.dec());
+
+                function revocable(func){
+                    return {
+                        invoke: function(...args){
+                            return func.apply(this, args);                         
+                        },
+                        revoke: function(){
+                            func = null;
+                        }
+                    }
+                }
+
+                var temp = revocable(double);
+                temp.invoke(7);
+                temp.revoke();
+                temp.invoke(8);
+            </script>            
+        </pre>
+    </body>
+</html>
